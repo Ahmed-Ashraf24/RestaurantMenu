@@ -6,13 +6,13 @@ import {
     StyleSheet,
     SafeAreaView,
     ScrollView,
-
     Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { auth, db } from '../database/databaseHook';
 import { signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import EditProfileModal from '../components/EditProfileModal'; // Import the modal component
 
 interface UserData {
     firstName: string;
@@ -25,6 +25,7 @@ interface UserData {
 const ProfileScreen: React.FC<any> = ({ navigation }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [editModalVisible, setEditModalVisible] = useState(false);
 
     useEffect(() => {
         fetchUserData();
@@ -43,6 +44,15 @@ const ProfileScreen: React.FC<any> = ({ navigation }) => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleEditProfile = () => {
+        setEditModalVisible(true);
+    };
+
+    const handleEditSuccess = () => {
+        // Refresh user data after successful edit
+        fetchUserData();
     };
 
     const handleLogout = () => {
@@ -118,7 +128,6 @@ const ProfileScreen: React.FC<any> = ({ navigation }) => {
                         <Text style={styles.headerTitle}>My Profile 👤</Text>
                     </View>
 
-                    {/* Profile Avatar Section */}
                     <View style={styles.avatarSection}>
                         <View style={styles.avatarContainer}>
                             <Text style={styles.avatarText}>{getInitials()}</Text>
@@ -131,7 +140,6 @@ const ProfileScreen: React.FC<any> = ({ navigation }) => {
                         </Text>
                     </View>
 
-                    {/* Profile Information */}
                     <View style={styles.infoSection}>
                         <View style={styles.infoCard}>
                             <Text style={styles.sectionTitle}>Personal Information</Text>
@@ -165,13 +173,15 @@ const ProfileScreen: React.FC<any> = ({ navigation }) => {
                         </View>
                     </View>
 
-                    {/* Action Buttons */}
                     <View style={styles.actionsSection}>
-                        <TouchableOpacity style={styles.actionButton}>
+                        <TouchableOpacity
+                            style={styles.actionButton}
+                            onPress={handleEditProfile}
+                        >
                             <Text style={styles.actionButtonText}>Edit Profile</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.actionButton}>
+                        <TouchableOpacity style={styles.actionButton} onPress={navigation.navigate("OrderScreen")}>
                             <Text style={styles.actionButtonText}>Order History</Text>
                         </TouchableOpacity>
 
@@ -193,6 +203,13 @@ const ProfileScreen: React.FC<any> = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
+
+                <EditProfileModal
+                    visible={editModalVisible}
+                    onClose={() => setEditModalVisible(false)}
+                    userData={userData}
+                    onUpdateSuccess={handleEditSuccess}
+                />
             </SafeAreaView>
         </LinearGradient>
     );
