@@ -176,7 +176,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                         );
                         return;
                     }
-                    throw emailError;
+                    throw alert(emailError);
                 }
             } else {
                 Alert.alert(

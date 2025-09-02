@@ -7,7 +7,6 @@ import {
     View,
     TouchableOpacity,
     TextInput,
-    ScrollView
 } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import ProductCard from '../components/ProductCard';
