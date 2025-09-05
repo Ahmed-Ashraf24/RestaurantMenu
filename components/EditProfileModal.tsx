@@ -42,7 +42,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     const [currentPassword, setCurrentPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Reset form when modal opens
     React.useEffect(() => {
         if (visible && userData) {
             setFirstName(userData.firstName);
@@ -79,7 +78,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             return;
         }
 
-        // Check if email or password is being changed
         const emailChanged = email !== userData?.email;
         const passwordChanged = newPassword.trim() !== '';
 
@@ -94,12 +92,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         setLoading(true);
 
         try {
-            // Re-authenticate if needed
             if (emailChanged || passwordChanged) {
                 await reauthenticateUser(currentPassword);
             }
 
-            // Update Firestore data first (excluding email if it's being changed)
+
             const userDocRef = doc(db, 'users', auth.currentUser.uid);
             const updateData: any = {
                 firstName: firstName.trim(),
@@ -107,19 +104,16 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 phone: phone.trim(),
             };
 
-            // Only update email in Firestore if it's not changing in Auth
             if (!emailChanged) {
                 updateData.email = email.trim();
             }
 
             await updateDoc(userDocRef, updateData);
 
-            // Update Firebase Auth password if provided
             if (passwordChanged) {
                 await updatePassword(auth.currentUser, newPassword);
             }
 
-            // Handle email change with verification
             if (emailChanged) {
                 try {
                     await updateEmail(auth.currentUser, email.trim());
@@ -127,7 +121,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     // Send verification email
                     await sendEmailVerification(auth.currentUser);
 
-                    // Update Firestore with new email after successful Auth update
                     await updateDoc(userDocRef, {
                         email: email.trim(),
                     });

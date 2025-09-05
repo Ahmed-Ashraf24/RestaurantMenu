@@ -181,7 +181,12 @@ const ProfileScreen: React.FC<any> = ({ navigation }) => {
                             <Text style={styles.actionButtonText}>Edit Profile</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.actionButton} onPress={navigation.navigate("OrderScreen")}>
+                        <TouchableOpacity style={styles.actionButton}
+                                          onPress={()=>{
+                            navigation.navigate("OrderScreen")
+                            console.log("the order button is clicked")
+                                          }
+                        }>
                             <Text style={styles.actionButtonText}>Order History</Text>
                         </TouchableOpacity>
 
